@@ -3,6 +3,10 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import dbConnect from "./config/db";
 import authRouter from "./routes/auth.route";
+import {
+  errorHandler,
+  urlNotFound,
+} from "./middlewares/error-handler.middleware";
 
 dotenv.config();
 
@@ -21,6 +25,10 @@ app.use("/api/auth", authRouter);
 app.get("/", (req, res) => {
   res.status(200).send("hello world");
 });
+
+// error handler middleware
+app.all("*", urlNotFound);
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log("Server listening on port " + PORT);
