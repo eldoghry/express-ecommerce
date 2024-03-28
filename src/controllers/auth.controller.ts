@@ -13,12 +13,21 @@ const register = asyncHandler(async (req: Request, res: Response) => {
   if (isFound) throw createError(400, "Email already exists");
 
   const user = await userService.create(req.body);
-  const payload = { id: user._id };
 
-  const accessToken: string = JWT.sign(payload);
-  const refreshToken: string = JWT.refreshToken(payload);
+  const payload = {
+    id: user._id,
+    email: user.email,
+    phone: user.phone,
+    role: user.role,
+    status: user.status,
+  };
 
-  res.status(201).json({ accessToken, refreshToken });
+  const tokens = {
+    accessToken: JWT.sign(payload),
+    refreshToken: JWT.refreshToken(payload),
+  };
+  
+  res.status(201).json({ tokens });
 });
 
 const login = asyncHandler(async (req: Request, res: Response) => {
@@ -30,11 +39,20 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   const isPasswordConfirmed = await user.isPasswordMatched(password);
   if (!isPasswordConfirmed) throw createError(401, "Invalid credentials");
 
-  const payload = { id: user._id };
-  const accessToken: string = JWT.sign(payload);
-  const refreshToken: string = JWT.refreshToken(payload);
+  const payload = {
+    id: user._id,
+    email: user.email,
+    phone: user.phone,
+    role: user.role,
+    status: user.status,
+  };
 
-  res.status(200).json({ accessToken, refreshToken });
+  const tokens = {
+    accessToken: JWT.sign(payload),
+    refreshToken: JWT.refreshToken(payload),
+  };
+
+  res.status(200).json({ user: payload, tokens });
 });
 
 export { register, login };
