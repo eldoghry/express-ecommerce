@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import dbConnect from "./config/db";
 import authRouter from "./routes/auth.route";
+import userRouter from "./routes/user.route";
 import {
   errorHandler,
   urlNotFound,
@@ -21,6 +22,7 @@ app.use(morgan("short"));
 dbConnect();
 
 app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
 
 app.get("/", (req, res) => {
   res.status(200).send("hello world");
