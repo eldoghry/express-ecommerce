@@ -1,0 +1,40 @@
+import { Request, Response } from "express";
+import asyncHandler from "express-async-handler";
+import createError from "http-errors";
+import * as userService from "../services/user.service";
+import User from "../models/user.model";
+import * as JWT from "../config/jwt";
+
+const register = asyncHandler(async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  const isFound = await userService.findOne({ email });
+
+  if (isFound) throw createError(400, "Email already exists");
+
+  const user = await userService.create(req.body);
+  const payload = { id: user._id };
+
+  const accessToken: string = JWT.sign(payload);
+  const refreshToken: string = JWT.refreshToken(payload);
+
+  res.status(201).json({ accessToken, refreshToken });
+});
+
+const login = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  let user = await User.findOne({ email }).populate("password");
+
+  if (!user) throw createError(401, "Invalid credentials");
+
+  const isPasswordConfirmed = await user.isPasswordMatched(password);
+  if (!isPasswordConfirmed) throw createError(401, "Invalid credentials");
+
+  const payload = { id: user._id };
+  const accessToken: string = JWT.sign(payload);
+  const refreshToken: string = JWT.refreshToken(payload);
+
+  res.status(200).json({ accessToken, refreshToken });
+});
+
+export { register, login };
