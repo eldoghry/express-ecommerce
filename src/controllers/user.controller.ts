@@ -26,4 +26,17 @@ const findOne = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json(user);
 });
 
-export { createUser, findAll, findOne };
+const deleteOne = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const isDeleted = await userService.deleteOne(id);
+  if (!isDeleted) throw createError(404, "User not found");
+  res.status(200).json({ message: "User deleted successfully" });
+});
+
+const updateOne = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const user = await userService.updateOne(id, { ...req.body });
+  res.status(200).json(user);
+});
+
+export { createUser, findAll, findOne, deleteOne, updateOne };

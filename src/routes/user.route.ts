@@ -9,5 +9,6 @@ const router = express.Router();
 
 router.get("/", userController.findAll);
 router.get("/:id", [authMiddleware, isValidMongoId, canAccess], userController.findOne);
+router.delete("/:id", [authMiddleware, isValidMongoId, isAdmin], userController.deleteOne);
 
 export default router;

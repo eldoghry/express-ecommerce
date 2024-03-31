@@ -12,8 +12,8 @@ const findAll = async (filter: { [key: string]: any } = {}) => {
   return User.find(filter);
 };
 
-const updateOne = async (data: Partial<IUser>) => {
-  return User.updateOne();
+const updateOne = async (id: string, data: Partial<IUser>) => {
+  return User.updateOne({ _id: id }, data);
 };
 
 const deleteOne = async (_id: string) => {
