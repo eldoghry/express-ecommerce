@@ -26,9 +26,7 @@ interface IUserMethods {
 }
 
 // Declare the Schema of the Mongo model
-export const userSchema = new mongoose.Schema<
-  HydratedDocument<IUser, IUserMethods>
->({
+export const userSchema = new mongoose.Schema<HydratedDocument<IUser, IUserMethods>>({
   firstName: {
     type: String,
     required: true,
@@ -73,7 +71,14 @@ userSchema.methods.isPasswordMatched = async function (plainPassword: string) {
   return await bcrypt.compare(plainPassword, this.password);
 };
 
-// TODO: exclude password
+userSchema.set("toJSON", {
+  transform: (doc, ret) => {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.__v;
+    return ret;
+  },
+});
 
 //Export the model
 export default mongoose.model("User", userSchema);
