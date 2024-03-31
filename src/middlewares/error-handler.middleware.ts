@@ -16,9 +16,9 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
   if (err instanceof HttpError) statusCode = err.statusCode;
 
   res.status(statusCode).json({
+    message: err.message,
     status: "error",
     url: isDev ? req.url : undefined,
-    message: err.message,
     stack: isDev ? err?.stack : undefined,
   });
 };
@@ -27,10 +27,12 @@ export const validateDtoMiddleware = function <T>(dtoClass: ClassConstructor<T>)
   return async (req: Request, res: Response, next: NextFunction) => {
     const dtoInstance = plainToClass(dtoClass, req.body);
     const errors = await validate(dtoInstance as object);
+
     if (errors.length > 0) {
       const messages = errors.map((err) => Object.values(err.constraints!)).join(", ");
       next(createError(400, messages));
     }
+
     next();
   };
 };

@@ -6,11 +6,6 @@ import { LoginDto, RegisterDto } from "../dtos/auth.dto";
 const router = express.Router();
 
 router.post("/login", validateDtoMiddleware(LoginDto), authController.login);
-
-router.post(
-  "/register",
-  validateDtoMiddleware(RegisterDto),
-  authController.register
-);
+router.post("/register", validateDtoMiddleware(RegisterDto), authController.register);
 
 export default router;
