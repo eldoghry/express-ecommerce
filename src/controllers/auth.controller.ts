@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import createError from "http-errors";
 import * as userService from "../services/user.service";
-import User from "../models/user.model";
+import User, { UserStatus } from "../models/user.model";
 import * as JWT from "../config/jwt";
 
 const register = asyncHandler(async (req: Request, res: Response) => {
@@ -36,14 +36,13 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   let user = await User.findOne({ email }).populate("password");
 
   if (!user) throw createError(401, "Invalid credentials");
+  else if (user.status === UserStatus.blocked) throw createError(403, "Your account is blocked");
 
   const isPasswordConfirmed = await user.isPasswordMatched(password);
   if (!isPasswordConfirmed) throw createError(401, "Invalid credentials");
 
   const payload = {
     id: user._id,
-    email: user.email,
-    phone: user.phone,
     role: user.role,
     status: user.status,
   };
