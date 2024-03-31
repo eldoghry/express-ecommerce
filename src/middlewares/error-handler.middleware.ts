@@ -26,13 +26,15 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
 export const validateDtoMiddleware = function <T>(dtoClass: ClassConstructor<T>) {
   return async (req: Request, res: Response, next: NextFunction) => {
     const dtoInstance = plainToClass(dtoClass, req.body);
-    const errors = await validate(dtoInstance as object);
+    const errors = await validate(dtoInstance as object, { whitelist: true });
 
     if (errors.length > 0) {
       const messages = errors.map((err) => Object.values(err.constraints!)).join(", ");
       next(createError(400, messages));
     }
 
+    req.body = dtoInstance; // to whitelist body
+    console.log(req.body);
     next();
   };
 };
