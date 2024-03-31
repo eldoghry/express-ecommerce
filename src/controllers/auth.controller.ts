@@ -26,12 +26,13 @@ const register = asyncHandler(async (req: Request, res: Response) => {
     accessToken: JWT.sign(payload),
     refreshToken: JWT.refreshToken(payload),
   };
-  
+
   res.status(201).json({ tokens });
 });
 
 const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
+
   let user = await User.findOne({ email }).populate("password");
 
   if (!user) throw createError(401, "Invalid credentials");
