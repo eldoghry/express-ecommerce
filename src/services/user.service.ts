@@ -13,7 +13,7 @@ const findAll = async (filter: { [key: string]: any } = {}) => {
 };
 
 const updateOne = async (id: string, data: Partial<IUser>) => {
-  return User.updateOne({ _id: id }, data);
+  return User.findOneAndUpdate({ _id: id }, data, { new: true });
 };
 
 const deleteOne = async (_id: string) => {

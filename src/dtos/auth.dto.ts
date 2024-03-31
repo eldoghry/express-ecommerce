@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString, IsStrongPassword } from "class-validator";
+import { CreateUserDto } from "./user.dto";
 
 export class LoginDto {
   @IsEmail()
@@ -8,21 +9,4 @@ export class LoginDto {
   password!: string;
 }
 
-export class RegisterDto {
-  @IsEmail()
-  email!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  firstName!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  lastName!: string;
-
-  @IsPhoneNumber("EG")
-  phone!: string;
-
-  @IsStrongPassword()
-  password!: string;
-}
+export class RegisterDto extends CreateUserDto {}
