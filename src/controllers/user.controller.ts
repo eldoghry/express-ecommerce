@@ -3,6 +3,7 @@ import User from "../models/user.model";
 import asyncHandler from "express-async-handler";
 import createError from "http-errors";
 import * as userService from "../services/user.service";
+import { IRequest } from "../interfaces/request.interface";
 
 const createUser = asyncHandler(async (req: Request, res: Response) => {
   const { email } = req.body;
@@ -19,4 +20,10 @@ const findAll = asyncHandler(async (req: Request, res: Response) => {
   res.status(201).json(users);
 });
 
-export { createUser, findAll };
+const findOne = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const user = await userService.findOne({ _id: id });
+  res.status(200).json(user);
+});
+
+export { createUser, findAll, findOne };
