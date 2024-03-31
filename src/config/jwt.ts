@@ -1,5 +1,5 @@
 import createHttpError from "http-errors";
-import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import jwt, { JwtPayload, TokenExpiredError } from "jsonwebtoken";
 
 export function sign(data: { [key: string]: any }, expiresIn: string = "1d") {
   return jwt.sign(
@@ -18,8 +18,8 @@ export function refreshToken(data: { [key: string]: any }) {
 export function verify(token: string) {
   //   if (!token) throw createHttpError(400, "Missing Token");
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    return decoded;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    return decoded.data;
   } catch (error: any) {
     console.log(error?.message);
     let errorMessage = "Invalid token";
